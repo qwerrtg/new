@@ -760,10 +760,9 @@ RANK_TABLE_FILE [0,8] 8
 
 ### **人设数据组装**
 
-1. 获取讯飞开源人设[参考数据](https://gitee.com/iflytekopensource/iFlytekSpark-13B/blob/master/self-awareness/renshe_1000.jsonl)，训练前需要将数据转成JSONL格式数据，并组装成训练数据；
+1. 获取讯飞开源人设数据模版[参考数据:renshe_1000.jsonl](https://gitee.com/iflytekopensource/iFlytekSpark-13B/blob/master/self-awareness/template/renshe_1000.jsonl);
 
-2. 参照""讯飞星火开源AI助手"人设，可自行添加、修改或删除自有人设属性，[attribute.json](https://gitee.com/iflytek/iFlytekSpark-13B/blob/master/self-awareness/attribute.json)：
-
+2. 参照"讯飞星火开源AI助手"人设属性模版[attribute.json](https://gitee.com/iflytek/iFlytekSpark-13B/blob/master/self-awareness/template/attribute.json)，可自行添加、修改或删除自有人设属性：
 ```
 {
     "角色|身份": "讯飞星火开源大模型AI助手",
@@ -788,51 +787,17 @@ RANK_TABLE_FILE [0,8] 8
 }
 ```
 
-3. 使用下面代码将已有的"讯飞星火开源AI助手"人设参考数据清洗为设定的人设属性；
-
-```
+3. 使用下面代码将已有的"讯飞星火开源AI助手"人设参考数据清洗为设定的人设属性；       
+- 获取组装待转化数据的python脚本[concat.py](https://gitee.com/iflytek/iFlytekSpark-13B/blob/master/self-awareness/concat.py)，然后执行下述命令完成数据转换:
+```shell
 python concat.py --template renshe_1000.jsonl --attribute attribute.json --output output.txt
 ```
 
-4. 用于组装待转化数据的[concat.py](https://gitee.com/iflytek/iFlytekSpark-13B/blob/master/self-awareness/concat.py)：
-
-```
-import json
-import argparse
-
-
-parser = argparse.ArgumentParser()
-parser.add_argument("--template", type=str, help="Path to the template file.")
-parser.add_argument("--attribute", type=str, default="attribute.json", help="Path to the model system.")
-parser.add_argument("--output", type=str, default="output.txt", help="Path to the output file.")
-
-args = parser.parse_args()
-
-
-prompt = """假设你是一个用户可自定义的讯飞星火开源的AI助手，在给定的人设背景下回复用户问题<ret>##人设背景如下：{attr}##用户：{{{input}}}##参考答案：{{{target}}}##回答：{{}}"""
-attribute = json.load(open(args.attribute, "r"))
-
-assert len(attribute) > 0, "The number of attribute must greater than one."
-for k, v in attribute.items():
-    print(f"\t{k}: {v}")
-
-joined_att = '，'.join([f'(你的{key}：{value})' for key, value in attribute.items()])
-
-data = open(args.template, "r").readlines()
-fw = open(args.output, "w")
-for i in range(len(data)):
-    line = json.loads(data[i])
-    new_line = prompt.format(attr=joined_att, input=line["input"], target=line["target"])
-    fw.write(new_line + "\n")
-    
-```
-
-5. 人设组装后的示例请参照：[output.txt](https://gitee.com/iflytek/iFlytekSpark-13B/blob/master/self-awareness/output.txt)；
-
+4. 人设组装后的示例：[output.txt](https://gitee.com/iflytek/iFlytekSpark-13B/blob/master/self-awareness/output.txt)；
 
 
 ### **人设数据抽取**
-目录结构：
+[目录结构](https://gitee.com/iflytek/iFlytekSpark-13B/blob/master/self-awareness/data_gen)：
 ```
     qa_gen.py ---执行数据抽取的脚本
     SparkApi.py ---星火大模型接口文件
@@ -850,15 +815,15 @@ for i in range(len(data)):
 注意事项：
 ```
     在qa_gen.py文件中：
-    appid = "XXXXXXXX"     #填写控制台中获取的 APPID 信息
-    api_secret = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"   #填写控制台中获取的 APISecret 信息
-    api_key ="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"    #填写控制台中获取的 APIKey 信息
-    上述接口信息需要实际申请获取
+    appid = "XXXXXXXX"     #填写讯飞开放平台控制台中获取的 APPID 信息
+    api_secret = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"   #填写讯飞开放平台控制台中获取的 APISecret 信息
+    api_key ="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"    #填写讯飞开放平台控制台中获取的 APIKey 信息
+    上述接口信息需要实际在讯飞开放平台申请获取
 ```
 
 ### **人设训练**
 
-人设训练测试建议使用如下训练参数作为默认训练所需的参数，当然随着其他领域数据的加入，我们相应也要调整部分参数的信息以达到更优效果：
+人设训练可采用全量SFT或者Lora训练方案(训练步骤跟前面一致)，建议使用如下训练参数作为默认训练所需的参数，当然随着其他领域数据的加入，我们相应也要调整部分参数的信息以达到更优效果：
 
 ```
 model_size=13
