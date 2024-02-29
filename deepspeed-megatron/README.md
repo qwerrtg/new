@@ -146,13 +146,13 @@ pip install -r requirement.txt
 本仓提供对应的预训练权重、微调权重和词表文件用于训练/微调/推理。
 
 预训练权重：     
-[iFlytekSpark_13B_base_fp32](https://openi.pcl.ac.cn/iflytek/iFlytekSpark-13B/modelmanage/model_filelist_tmpl?name=iFlytekSpark_13B_base_fp32)
+[iFlytekSpark_13B_base_fp32](https://gitee.com/iflytekopensource/i-flytek-spark-13-b-model-gpu/tree/master/iFlytekSpark_13B_base_fp32)
 
 微调权重：     
-[iFlytekSpark_13B_chat_fp32](https://openi.pcl.ac.cn/iflytek/iFlytekSpark-13B/modelmanage/model_filelist_tmpl?name=iFlytekSpark_13B_chat_fp32)
+[iFlytekSpark_13B_chat_fp32](https://gitee.com/iflytekopensource/i-flytek-spark-13-b-model-gpu/tree/master/iFlytekSpark_13B_chat_fp32)
 
 Tokenizer：      
-[Tokenizer](https://openi.pcl.ac.cn/iflytek/iFlytekSpark-13B/modelmanage/model_filelist_tmpl?name=Tokenizer)
+[Tokenizer](https://gitee.com/iflytekopensource/i-flytek-spark-13-b-model-gpu/tree/master/Tokenizer)
 
 **模型权重转换**
 
